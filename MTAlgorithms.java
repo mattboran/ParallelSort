@@ -12,8 +12,10 @@ import java.util.concurrent.RecursiveAction;
 		String[] description = new String[] {
 				"comments on your program goes here"
 		};
-		static int threshold = 1000;
+		static int[] threshold = new int[]{ 1000, 10000, 100000, 1000000, 2500000, 5000000 };
+		static int num_test = 6;
 		// Retrieved command code
+				
 		boolean arrayInitialized = false;
 		int NDataItems = 10000000;
 		int[] a = new int[NDataItems];
@@ -28,9 +30,15 @@ import java.util.concurrent.RecursiveAction;
 		         miMultiThreadedQuickSort,
 		         miJavaParallelSort;
 		
-		long start, 
-					elapsedTimeSerialSort, elapsedTimeParallelMergeSort,
-					elapsedTimeParallelQuickSort,elapsedTimeJavaParallelSort;
+		
+		
+		long[] start = new long[num_test];
+		long[] elapsedTimeSerialSort = new long[num_test];
+		long[] elapsedTimeParallelMergeSort = new long[num_test];
+		long[] elapsedTimeParallelQuickSort = new long[num_test];
+		long[] elapsedTimeJavaParallelSort = new long[num_test];
+		
+		
 		String command = "";
 			
 		public static void main(String[] args)
@@ -157,8 +165,8 @@ import java.util.concurrent.RecursiveAction;
 				{
 					InitializeArrays();
 					arrayInitialized = true;
-					 miSerialMax.setEnabled(true);
-					 miMultiThreadedMax.setEnabled(true);
+					// miSerialMax.setEnabled(true);
+					// miMultiThreadedMax.setEnabled(true);
 			         miSerialSort.setEnabled(true);
 			         miMultiThreadedMergeSort.setEnabled(true);
 			         miMultiThreadedQuickSort.setEnabled(true);
@@ -173,9 +181,9 @@ import java.util.concurrent.RecursiveAction;
 						int[] b = new int[a.length];
 						System.arraycopy(a, 0, b, 0, a.length);
 						
-						start = System.currentTimeMillis();
+						start[0] = System.currentTimeMillis();
 						k.mergeSort(b);
-						elapsedTimeSerialSort = System.currentTimeMillis() - start;
+						elapsedTimeSerialSort[0] = System.currentTimeMillis() - start[0];
 						
 						repaint();
 					}
@@ -183,14 +191,18 @@ import java.util.concurrent.RecursiveAction;
 					
 					if("MultiThreaded MergeSort".equals(command))
 					{
-						// create a new array, copy original array to it
+						// create a new array
 						int[] b = new int[a.length];
-						System.arraycopy(a, 0, b, 0, a.length);
 						
-						start = System.currentTimeMillis();
-						ParallelMergeSort.startMainTask(b,threshold);
+						for(int i = 0; i < num_test; i++){
+							//copy original array to new array (which is sorted after the 1st time this loop executes
+							System.arraycopy(a, 0, b, 0, a.length);
+							
+							start[i] = System.currentTimeMillis();
+							ParallelMergeSort.startMainTask(b,threshold[i]);
 						
-						elapsedTimeParallelMergeSort = System.currentTimeMillis()-start;
+							elapsedTimeParallelMergeSort[i] = System.currentTimeMillis()-start[i];
+						}
 						if (isSorted(b))
 							repaint();
 						else
@@ -203,11 +215,11 @@ import java.util.concurrent.RecursiveAction;
 							int[] b = new int[a.length];
 							System.arraycopy(a, 0, b, 0, a.length);
 							
-							start = System.currentTimeMillis();
+							start[0] = System.currentTimeMillis();
 //+++++++ need to develop this class
 							
 							
-							elapsedTimeParallelQuickSort = System.currentTimeMillis()-start;
+							elapsedTimeParallelQuickSort[0] = System.currentTimeMillis()-start[0];
 							if (isSorted(b))
 								repaint();
 							else
@@ -220,9 +232,9 @@ import java.util.concurrent.RecursiveAction;
 						int[] b = new int[a.length];
 						System.arraycopy(a, 0, b, 0, a.length);
 						
-						start = System.currentTimeMillis();
+						start[0] = System.currentTimeMillis();
 						Arrays.parallelSort(b);
-						elapsedTimeJavaParallelSort = System.currentTimeMillis()-start;
+						elapsedTimeJavaParallelSort[0] = System.currentTimeMillis()-start[0];
 						
 						repaint();
 					}
@@ -239,22 +251,55 @@ import java.util.concurrent.RecursiveAction;
 			
 			public void paint(Graphics g)
 			{
+				Font title_font = new Font("TimesRoman", Font.BOLD, 16);
+				g.setFont(title_font);
+				g.setColor(Color.BLACK);
 				g.drawString(
 					"Number of processors is "+Integer.toString( Runtime.getRuntime().availableProcessors() ),300,130);
 				g.drawString("Number of Data Items = "+Integer.toString(NDataItems),300, 150);
-				g.drawString("Threshold = "+Integer.toString(threshold),300, 170);
+				g.drawString("Threshold = "+Integer.toString(threshold[0]),300, 170);
 				
-				if( "Serial Sort".equals(command ) 
-					|| "MultiThreaded MergeSort".equals(command)
-					|| "MultiThreaded QuickSort".equals(command)
-					|| "Java Parallel Sort".equals(command))
+				if( "Serial Sort".equals(command ) )
 				{
-					// develop
-				}	
-				
-				else	
-				if("About".equals(command))
+					int x = 150;
+					int y = 230;
+					g.drawLine(100,175, 600, 175);
+					g.drawLine(100,250, 600, 250);
+					g.drawString("Serial MergeSort", x, y);
+					g.drawString(Long.toString(elapsedTimeSerialSort[0])+"ms", x+300, y);
+				}
+				else if( "MultiThreaded MergeSort".equals(command))
 				{
+					int x = 150;
+					int y = 230;
+					g.drawLine(100,175, 600, 175);
+					g.drawLine(100,y+10, 600, y+10);
+					g.drawString("Parallel MergeSort",  x + 150, y - 20);
+					g.drawString("Threshold", x, y);
+					g.drawString("Elapsed Time", x+300, y);
+					for(int i = 0; i < num_test; i++){
+						y += 30;
+						g.drawString(Long.toString(threshold[i]), x,  y);
+						g.drawString(Long.toString(elapsedTimeParallelMergeSort[i])+"ms", x+300,y);
+					}
+				}
+				else if( "MultiThreaded QuickSort".equals(command))
+				{
+					
+				}
+				else if( "Java Parallel Sort".equals(command))
+				{
+					int x = 150;
+					int y = 230;
+					g.drawLine(100,175, 600, 175);
+					g.drawLine(100,250, 600, 250);
+					g.drawString("Java Parallel Sort", x, y);
+					g.drawString(Long.toString(elapsedTimeJavaParallelSort[0])+"ms", x+300, y);
+				}
+				else if("About".equals(command))
+				{
+					g.setColor(Color.WHITE);
+					g.fillRect(0, 0, getWidth(), getHeight());
 					int x = 200;
 					int y = 200;
 					for(int i = 0; i < description.length; i++)
@@ -266,6 +311,8 @@ import java.util.concurrent.RecursiveAction;
 				else
 					if("Initialize Array".equals(command))
 					{
+						g.setFont(new Font("TimesRoman", Font.ITALIC, 16));
+						g.setColor(Color.RED);
 						g.drawString("Array Initialized",200, 100);
 					}	
 			}
@@ -273,10 +320,10 @@ import java.util.concurrent.RecursiveAction;
 public void InitializeArrays ()
 {
 	maximumSerial=	maximumParallel = -1;
-	
-	start = elapsedTimeSerialMax = elapsedTimeParallelMax =
-				elapsedTimeSerialSort =  elapsedTimeParallelMergeSort = 
-						elapsedTimeParallelQuickSort = elapsedTimeJavaParallelSort = 0;
+	for(int i = 0; i < num_test; i++){
+		start[i] = elapsedTimeSerialSort[i] =  elapsedTimeParallelMergeSort[i] = 
+						elapsedTimeParallelQuickSort[i] = elapsedTimeJavaParallelSort[i] = 0;
+	}
 	for (int i=0; i<a.length; i++)
 		a[i] = (int) (Math.random()*400000000);
 }
