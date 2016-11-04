@@ -10,10 +10,25 @@ import java.util.concurrent.RecursiveAction;
 	public class  MTAlgorithms extends Frame implements ActionListener
 	{
 		String[] description = new String[] {
-				"comments on your program goes here"
+				"This is Tudor Boran's submission to this Parallel Algorithms Assignment",
+				"I have implemented QuickSort in Parallel using the Hoare Partition Scheme. This was a helpful",
+				" exercise for me, because my independent study involves several implementations of ",
+				"the Path Tracing algorithm for generating realistic 3D images:",
+				"in serial C++, serial Rust, (possibly serial Java), Multithreaded C++ with OpenMP,",
+				" Multithreaded C++ with std::thread, Multithreaded Rust with std::sync and std::thread,",
+				"(possibly Multithreaded Java), and fully parallel on GPU with NVIDIA CUDA and AMD OpenCL.",
+				" ",
+				" I also really enjoy algorithm implementation, and am hoping to get into systems programming",
+				" by going for a Masters in CS in either Systems or Distributed/Parallel Software Engineernig.",
+				" ",
+				" Unless I get into Cornell's Computer Graphics PhD program :)",
+				
 		};
+		
+		// These are the thresholds that will be tested for Parallel Merge and Quick sort. 
+		// This list can be increased 
 		static int[] threshold = new int[]{ 1000, 10000, 100000, 1000000, 2500000, 5000000 };
-		static int num_test = 6;
+		static int num_tests = threshold.length;
 		// Retrieved command code
 				
 		boolean arrayInitialized = false;
@@ -32,11 +47,11 @@ import java.util.concurrent.RecursiveAction;
 		
 		
 		
-		long[] start = new long[num_test];
-		long[] elapsedTimeSerialSort = new long[num_test];
-		long[] elapsedTimeParallelMergeSort = new long[num_test];
-		long[] elapsedTimeParallelQuickSort = new long[num_test];
-		long[] elapsedTimeJavaParallelSort = new long[num_test];
+		long[] start = new long[num_tests];
+		long[] elapsedTimeSerialSort = new long[num_tests];
+		long[] elapsedTimeParallelMergeSort = new long[num_tests];
+		long[] elapsedTimeParallelQuickSort = new long[num_tests];
+		long[] elapsedTimeJavaParallelSort = new long[num_tests];
 		
 		
 		String command = "";
@@ -194,7 +209,7 @@ import java.util.concurrent.RecursiveAction;
 						// create a new array
 						int[] b = new int[a.length];
 						
-						for(int i = 0; i < num_test; i++){
+						for(int i = 0; i < num_tests; i++){
 							//copy original array to new array (which is sorted after the 1st time this loop executes
 							System.arraycopy(a, 0, b, 0, a.length);
 							
@@ -277,7 +292,7 @@ import java.util.concurrent.RecursiveAction;
 					g.drawString("Parallel MergeSort",  x + 150, y - 20);
 					g.drawString("Threshold", x, y);
 					g.drawString("Elapsed Time", x+300, y);
-					for(int i = 0; i < num_test; i++){
+					for(int i = 0; i < num_tests; i++){
 						y += 30;
 						g.drawString(Long.toString(threshold[i]), x,  y);
 						g.drawString(Long.toString(elapsedTimeParallelMergeSort[i])+"ms", x+300,y);
@@ -300,8 +315,9 @@ import java.util.concurrent.RecursiveAction;
 				{
 					g.setColor(Color.WHITE);
 					g.fillRect(0, 0, getWidth(), getHeight());
-					int x = 200;
-					int y = 200;
+					g.setColor(Color.BLACK);
+					int x = 100;
+					int y = 100;
 					for(int i = 0; i < description.length; i++)
 					{
 						g.drawString(description[i], x, y);
@@ -320,7 +336,7 @@ import java.util.concurrent.RecursiveAction;
 public void InitializeArrays ()
 {
 	maximumSerial=	maximumParallel = -1;
-	for(int i = 0; i < num_test; i++){
+	for(int i = 0; i < num_tests; i++){
 		start[i] = elapsedTimeSerialSort[i] =  elapsedTimeParallelMergeSort[i] = 
 						elapsedTimeParallelQuickSort[i] = elapsedTimeJavaParallelSort[i] = 0;
 	}
