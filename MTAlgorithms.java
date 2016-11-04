@@ -231,7 +231,10 @@ import java.util.concurrent.RecursiveAction;
 							System.arraycopy(a, 0, b, 0, a.length);
 							
 							start[0] = System.currentTimeMillis();
-//+++++++ need to develop this class
+							ParallelQuickSort PQS = new ParallelQuickSort(b, threshold[0]);
+							System.out.printf("First partition called got us index %d \n", PQS.partition(b, 0, b.length-2, b.length-1));
+							
+							//+++++++ need to develop this class
 							
 							
 							elapsedTimeParallelQuickSort[0] = System.currentTimeMillis()-start[0];

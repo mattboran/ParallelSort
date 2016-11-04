@@ -32,14 +32,16 @@ public class ParallelQuickSort {
 	//			int pivot: the pivot value.
 	
 	//	Returns: int - new pivot.
-	private int partition(int[] list, int left_ptr, int right_ptr, int pivot){
-		while(right_ptr - left_ptr > 1){
+	public int partition(int[] list, int left_ptr, int right_ptr, int pivot){
+		int iters = 500000000;
+		while(iters > 0){
+			iters--;
 			//Move left_ptr rightwards until it is >= pivot
-			while(list[left_ptr] < list[pivot]){
+			while(list[left_ptr] < list[pivot] && left_ptr < list.length -1){
 				left_ptr += 1;
 			}
 			//Move right_ptr leftwards until it is <= pivot
-			while(list[right_ptr] > list[pivot]){
+			while(list[right_ptr] > list[pivot] && right_ptr > 1){
 				right_ptr -= 1;
 			}
 			//If the left and right pointers don't converge on the same spot
@@ -48,12 +50,14 @@ public class ParallelQuickSort {
 				int rt_ptr_temp = list[right_ptr];
 				list[right_ptr] = list[left_ptr];
 				list[left_ptr] = rt_ptr_temp;
-				
-			}else{
-				
+				left_ptr += 1;
+				right_ptr -= 1;
+			}else //left_ptr == right_ptr
+			{
+				return left_ptr;
 			}
 		}
-		return 0;
+		return -1;
 	}
 	public static void startMainTask(int[] list, int threshold){
 		RecursiveAction mainTask = new SortTask(list, threshold);
